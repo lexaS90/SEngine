@@ -1,0 +1,8 @@
+{
+  "name": "SEngine",
+  "autoload": {
+    "psr-4": {
+      "SEngine\\": "src/"
+    }
+  }
+}
