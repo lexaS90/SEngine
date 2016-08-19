@@ -38,13 +38,4 @@ class Controller
         $methodName = 'action' . $action;
         return $this->$methodName();
     }
-
-    /**
-     * Destruct
-     */
-    public function __destruct()
-    {
-        if (true === $this->display)
-            $this->view->display(__DIR__ . '/../Templates/main.php');
-    }
 }

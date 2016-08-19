@@ -1,5 +1,8 @@
 {
   "name": "SEngine",
+  "require": {
+    "twig/twig": "1.24.1"
+  },
   "autoload": {
     "psr-4": {
       "SEngine\\": "src/"

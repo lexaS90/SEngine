@@ -4,12 +4,20 @@
 namespace SEngine\Controllers;
 
 
-use SEngine\Core\Controller;
-
-class News extends Controller
+class News extends Base
 {
     protected function actionIndex()
     {
-        $this->view->title = 'Новости';
+
+        $this->view->news = array(
+            array(
+                'name' => 'License and terms of use',
+                'text' => 'License and terms of use White and Clean Rounded is a CSS template that is free and fully standards compliant. Free CSS templates designed this template.'
+            ),
+            array(
+                'name' => 'Title with a link - Example of heading 2',
+                'text' => 'Donec nulla. Aenean eu augue ac nisl tincidunt rutrum. Proin erat justo, pharetra eget, posuere at, malesuada et, nulla.'
+            )
+        );
     }
 }

@@ -1,0 +1,20 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+    <title>Новости</title>
+{% endblock %}
+
+
+{% block content %}
+
+    {% for artical in news %}
+
+    <h2><a href="#">{{ artical.name }}</a></h2>
+    <div class="articles">
+        {{ artical.text }}
+    </div>
+    {% endfor %}
+
+{% endblock %}
+

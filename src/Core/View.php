@@ -36,4 +36,22 @@ class View
     {
         echo $this->render($template);
     }
+    
+    public function renderTwig($templates)
+    {
+        $data = [];
+
+        foreach($this->data as $k => $v)
+            $data[$k] = $v;
+        
+        $loader = new \Twig_Loader_Filesystem('src/Templates');
+        $twig = new \Twig_Environment($loader);
+
+        return $twig->render($templates, $data);
+    }
+
+    public function displayTwig($templates)
+    {
+        echo $this->renderTwig($templates);
+    }
 }
