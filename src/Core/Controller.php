@@ -7,7 +7,7 @@ namespace SEngine\Core;
 class Controller
 {
     protected $view;
-    protected $display = false;
+    protected $template = '';
 
     /**
      * Controller constructor.
@@ -33,9 +33,16 @@ class Controller
     {
         $this->beforeAction();
 
-        $this->display = true;
-
         $methodName = 'action' . $action;
         return $this->$methodName();
+    }
+
+    /**
+     * Destruct
+     */
+    public function __destruct()
+    {
+        if ('' !== $this->template)
+            $this->view->displayTwig($this->template);
     }
 }

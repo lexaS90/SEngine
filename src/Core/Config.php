@@ -8,6 +8,12 @@ use SEngine\Core\Libs\ArrayAccess;
 use SEngine\Core\Libs\Singleton;
 use SEngine\Core\Libs\Std;
 
+/**
+ * Class Config
+ * Example: Config::instance()->settings->display_errors;
+ *
+ * @package SEngine\Core
+ */
 class Config implements \ArrayAccess
 {
     use Singleton;

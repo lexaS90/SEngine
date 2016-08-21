@@ -1,0 +1,17 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+    <title>{{ title }}</title>
+{% endblock %}
+
+
+{% block content %}
+
+    <h1>{{ artical.title }}</h1>
+
+    <artical>{{ title }}</artical>
+    {{ form|raw }}
+
+{% endblock %}
+

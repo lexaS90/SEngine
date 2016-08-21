@@ -44,7 +44,7 @@ class View
         foreach($this->data as $k => $v)
             $data[$k] = $v;
         
-        $loader = new \Twig_Loader_Filesystem('src/Templates');
+        $loader = new \Twig_Loader_Filesystem('src/templates');
         $twig = new \Twig_Environment($loader);
 
         return $twig->render($templates, $data);

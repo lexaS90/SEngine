@@ -1,0 +1,17 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+    <title>{{ artical.title }}</title>
+{% endblock %}
+
+
+{% block content %}
+
+    <h1>{{ artical.title }}</h1>
+
+    <artical>{{ artical.text }}</artical>
+    <span>Автор: {{ author.name }}</span>
+
+{% endblock %}
+

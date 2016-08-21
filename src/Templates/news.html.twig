@@ -10,11 +10,13 @@
 
     {% for artical in news %}
 
-    <h2><a href="#">{{ artical.name }}</a></h2>
+    <h2><a href="/news/artical?id={{ artical.id }}">{{ artical.title }}</a></h2>
     <div class="articles">
         {{ artical.text }}
     </div>
     {% endfor %}
+
+    {{ form|raw }}
 
 {% endblock %}
 

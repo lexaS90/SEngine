@@ -16,14 +16,4 @@ class Base extends Controller
         parent::__construct();
         $this->view->menu = array('Home', 'About', 'Photo');
     }
-
-    /**
-     * Destruct
-     */
-    public function __destruct()
-    {
-        if (true === $this->display)
-            $this->view->displayTwig('news.html.twig');
-    }
-
 }

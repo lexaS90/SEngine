@@ -1,8 +1,10 @@
 <?php
 return array(
     'db' =>array(
-        'host' => 'localhost',
-        'dbName' => 'test',
+        'db_host' => 'localhost',
+        'db_name' => 'sengine',
+        'db_user' => 'root',
+        'db_pass' => '',
     ),
 
     'site' => array(

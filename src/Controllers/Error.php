@@ -9,6 +9,7 @@ use SEngine\Core\Message;
 
 class Error extends Controller
 {
+    
     protected function action404()
     {
         header('HTTP/1.1 404 Not Found');
@@ -16,8 +17,14 @@ class Error extends Controller
 
     }
 
+    protected function actionDb()
+    {
+        $this->view->title = (new Message('error'))->site->db_error;
+
+    }
+
     public function __destruct()    {
 
-        $this->view->display(__DIR__ . '/../Templates/Error.php');
+        $this->view->displayTwig('error.html.twig');
     }
 }

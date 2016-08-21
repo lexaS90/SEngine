@@ -1,0 +1,38 @@
+<form action="{{ action }}" method="{{ method }}">
+    {% for key, field in fields %}
+
+        {% if field.tag == 'input' %}
+            <div class="form-item">
+                <label>{{ field.label }}
+                    <input name="{{ key }}" {% for key, item in field.attributes %} {{ key }}="{{ item }}" {% endfor %}>
+                </label>
+            </div>
+        {% endif %}
+
+        {% if field.tag == 'textarea' %}
+            <div class="form-item">
+                <label>{{ field.label }}
+                    <textarea name="{{ key }}"
+                        {% for key, item in field.attributes %} {{ key }}="{{ item }}"
+
+                        {% endfor %}>{{ field.value }}</textarea>
+                </label>
+            </div>
+        {% endif %}
+
+        {% if field.tag == 'select' %}
+            <div class="form-item">
+                <label>{{ field.label }}
+                    <select name="{{ key }}" {% for key, item in field.attributes %} {{ key }}="{{ item }}" {% endfor %}>
+                        {% for key, option in field.option %}
+                            <option value="{{ key }}" {% if field.default == key %}selected{% endif %}>
+                                {{ option }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+        {% endif %}
+
+    {% endfor %}
+</form>
