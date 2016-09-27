@@ -5,6 +5,7 @@ namespace SEngine\Models;
 
 
 use SEngine\Core\Model;
+use SEngine\Core\Validation;
 
 class News extends Model
 {
@@ -32,6 +33,17 @@ class News extends Model
         );
 
         return $fields;
+    }
+
+    public function validation()
+    {
+        $rule = array(
+            'title' => ['required' => true],
+            'text' => ['required' => true],
+        );
+
+        $validation = new Validation($this, $rule);
+        return $validation->run();
     }
 
 }

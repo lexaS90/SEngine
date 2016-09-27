@@ -8,11 +8,19 @@
 
 {% block content %}
 
+
+
+    <a href="{{ addButton.href }}" data-remote="false" data-toggle="modal" data-target="#myModal" class="btn btn-default">{{ addButton.text }}</a>
     {% for artical in news %}
 
     <h2><a href="/news/artical?id={{ artical.id }}">{{ artical.title }}</a></h2>
     <div class="articles">
         {{ artical.text }}
+    </div>
+    <div>
+        {% for button in controls %}
+            <a href="{{ button.href }}{{ artical.id }}" data-remote="false" data-toggle="modal" data-target="#myModal" class="btn btn-default">{{ button.text }}</a>
+        {% endfor %}
     </div>
     {% endfor %}
 

@@ -5,8 +5,10 @@ namespace SEngine\Controllers;
 
 
 use SEngine\Core\Db;
+use SEngine\Core\Exceptions\MultiException;
 use SEngine\Core\Ui;
 use SEngine\Core\View;
+use \SEngine\Core\Exceptions\NotFound;
 
 class News extends Base
 {
@@ -16,6 +18,15 @@ class News extends Base
 
         $news = \SEngine\Models\News::findAll();
         $this->view->news = $news;
+        
+        
+        $this->view->addButton = ['href' => 'http://'.$_SERVER['HTTP_HOST']. '/news/insert', 'text' => 'Добавить'];
+        $this->view->controls = array(
+            'edit' => ['href' => 'http://'.$_SERVER['HTTP_HOST']. '/news/update?id=', 'text' => 'edit'],
+            'remove' => ['href' => 'http://'.$_SERVER['HTTP_HOST']. '/news/remove?id=', 'text' => 'remove'],
+        );
+        
+        
     }
 
     protected function actionArtical()
@@ -30,54 +41,101 @@ class News extends Base
     
     protected function actionInsert()
     {
-        $this->template = 'insert_news.html.twig';
-
-       if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-           $artical = new \SEngine\Models\News();
-           $artical->fill($_POST);
-
-           $artical->insert();
-
-           header('Location: /news');
-       }
-        else {
+        if ($this->isAjax){
             $form = new Ui\Form();
             $form->fields = \SEngine\Models\News::formFields();
-            
-            $this->view->title = 'Добавление новости';
-            $this->view->form = $form->render();
+
+            if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+                $artical = new \SEngine\Models\News();
+                $artical->fill($_POST);
+
+                try{
+                    $isValid = $artical->validation();
+                }catch (MultiException $ex){
+                    foreach($ex as $k => $v){
+                       $error[$v['field']] = $v['errorText'];
+                       $this->ajaxData->error = $error;
+
+                    }
+
+                }
+                if ($isValid) {
+                    $artical->insert();
+                    (new Ui\StatusMessage())->set('Новость сохранена');
+                    $this->ajaxData->status = 1;
+                    $this->ajaxData->redirect = '/news';
+                }
+                else {
+                    $form->setData($artical);
+                    $this->ajaxData->status = 0;
+                }
+            }
+            $this->ajaxData->title = 'Добавление новости';
+            $this->ajaxData->body = $form->render();
+        }
+        else{
+            throw new NotFound;
         }
     }
 
     protected function actionUpdate()
     {
-        $this->template = 'insert_news.html.twig';
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            $artical = new \SEngine\Models\News();
-            $artical->fill($_POST);
-            $artical->save();
-
-            header('Location: /news');
-        }
-        else {
-            $artical = \SEngine\Models\News::findById($_GET['id']);
-
-
+        if ($this->isAjax){
             $form = new Ui\Form();
             $form->fields = \SEngine\Models\News::formFields();
+
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+                $artical = new \SEngine\Models\News();
+                $artical->fill($_POST);
+
+                try{
+                    $isValid = $artical->validation();
+                }catch(MultiException $ex){
+                    foreach($ex as $k => $v) {
+                        $error[$v['field']] = $v['errorText'];
+                        $this->ajaxData->error = $error;
+                    }
+                }
+
+                if ($isValid){
+                    $artical->save();
+                    (new Ui\StatusMessage())->set('Новость обновлена');
+                    $this->ajaxData->status = 1;
+                    $this->ajaxData->redirect = '/news';
+                }
+                else{
+                    $this->ajaxData->status = 0;
+                }
+            }
+
+            $artical = \SEngine\Models\News::findById($_GET['id']);
             $form->setData($artical);
 
-            $this->view->title = 'Редактирование новости';
-            $this->view->form =  $form->render();
+            $this->ajaxData->title = 'Редактирование новости';
+            $this->ajaxData->body =  $form->render();
+        }
+        else{
+            throw new NotFound;
         }
     }
 
     protected function actionRemove()
     {
-        $artical = \SEngine\Models\News::findById(5);
+        if ($this->isAjax){
+            $this->ajaxData->title = 'Удаление новости';
+            $this->ajaxData->body =  '<p>Вы действительно хотите удалить новость?</p>';
 
-        $artical->delete();
+            if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+                $artical = \SEngine\Models\News::findById($_GET['id']);
+                $artical->delete();
+                (new Ui\StatusMessage())->set('Новость удалена');
+                $this->ajaxData->status = 1;
+                $this->ajaxData->redirect = '/news';
+            }
+        }
+        else{
+            throw new NotFound;
+        }
     }
 }

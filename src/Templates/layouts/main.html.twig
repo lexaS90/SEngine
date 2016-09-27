@@ -4,6 +4,7 @@
     {% block head %}
     <meta http-equiv="Content-Language" content="English" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/src/templates/style.css" media="screen" />
     {% endblock %}
 </head>
@@ -27,6 +28,7 @@
     <div id="content">
         <div class="right">
 
+            {{ msg|raw }}
             {% block content %}{% endblock %}
         </div>
 
@@ -66,6 +68,91 @@
         Designed by <a href="http://www.free-css-templates.com/">Free CSS Templates</a>, Thanks to <a href="http://www.openwebdesign.org/">website design</a>
     </div>
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+            </div>
+            <div class="alert alert-danger" role="alert" style="display:none;"></div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="ajax">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- End modal -->
+
+
+<script
+        src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+        crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script>
+
+    var link;
+
+    $("#myModal").on("show.bs.modal", function(e) {
+        link = $(e.relatedTarget);
+        var modal = $(this);
+
+        $.ajax({
+            url: link.attr("href"),
+            type: "GET",
+            dataType: "json",
+            success: function(html){
+                modal.find('.modal-body').html(html.body);
+                modal.find('.modal-title').html(html.title);
+            }
+        });
+    });
+
+    $("body").on('click', '#ajax', function(){
+        var $form = $('#myModal').find('form');
+        $.ajax({
+            url: link.attr("href"),
+            type: "POST",
+            dataType: "json",
+            data: $form.serialize(),
+            success: function(html){
+
+                if (html.status == 0){
+                    $('.alert').show();
+
+                    $('.alert').html('');
+                    $form.find("[name]").css('border', '');
+
+                    $.each(html.error, function (field, error) {
+                        $('<p/>').text(error).appendTo('.alert');
+                        $form.find("[name='" + field + "']").css('border', '1px solid red');
+                    });
+
+
+
+                }
+                else{
+                    $("#myModal").modal('hide');
+                    location = html.redirect;
+
+                }
+
+
+            }
+        });
+    });
+
+</script>
+
 
 </body>
 </html>
