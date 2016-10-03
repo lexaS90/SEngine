@@ -14,8 +14,11 @@
     {% for artical in news %}
 
     <h2><a href="/news/artical?id={{ artical.id }}">{{ artical.title }}</a></h2>
-    <div class="articles">
-        {{ artical.text }}
+    {% if artical.files is not empty %}
+        <img src="{{ base }}/files/{{ artical.files }}" alt="{{ artical.title }}" width="20%">
+    {% endif %}
+        <div class="articles">
+        {{ artical.text|raw }}
     </div>
     <div>
         {% for button in controls %}

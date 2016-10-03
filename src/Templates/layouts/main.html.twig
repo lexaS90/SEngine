@@ -4,8 +4,15 @@
     {% block head %}
     <meta http-equiv="Content-Language" content="English" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <base href="{{ base }}">
+    <link rel="stylesheet" href="/vendor/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/vendor/blueimp-file-upload/css/jquery.fileupload.css">
     <link rel="stylesheet" type="text/css" href="/src/templates/style.css" media="screen" />
+        <style>
+            label{
+                display:block;
+            }
+        </style>
     {% endblock %}
 </head>
 <body>
@@ -103,6 +110,7 @@
     var link;
 
     $("#myModal").on("show.bs.modal", function(e) {
+
         link = $(e.relatedTarget);
         var modal = $(this);
 
@@ -113,8 +121,20 @@
             success: function(html){
                 modal.find('.modal-body').html(html.body);
                 modal.find('.modal-title').html(html.title);
+            },
+            complete: function() {
+                tinymce.init({
+                    selector:'textarea',
+                    setup: function (editor) {
+                        editor.on('change', function () {
+                            tinymce.triggerSave();
+                        });
+                    },
+                });
+                up();
             }
         });
+
     });
 
     $("body").on('click', '#ajax', function(){
@@ -145,13 +165,68 @@
                     location = html.redirect;
 
                 }
-
-
             }
         });
     });
 
+    // Upload
+
+    function up() {
+        'use strict';
+
+        var fileupload = $('.fileupload');
+        var url = fileupload.attr('data-url');console.log(fileupload);
+        var uploadData = fileupload.siblings('input');
+
+        fileupload.fileupload({
+            replaceFileInput: false,
+            dataType: 'json',
+            done: function (e, data) {console.log('ok');
+                $.each(data.result.files, function (index, file) {console.log(file);
+                    uploadData.val(file.name);
+                    var deleteBtn = "<button data-url='"+file.name+"' data-type='DELETE' class='btn btn-danger delete'>X</button>";
+                    $('#files').html('<img width="10%" src=' + file.url +'>'+deleteBtn);
+                });
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress .progress-bar').css(
+                        'width',
+                        progress + '%'
+                );
+            }
+        }).prop('disabled', !$.support.fileInput)
+                .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+        $("body").on('click', ".delete", function(){
+            $.ajax({
+                type: "DELETE",
+                url: url + '?file=' + $(this).attr('data-url'),
+                dataType: "json",
+                success: function(html){
+                    uploadData.val('');
+                    $('#files').html('');
+                    console.log(html);
+                },
+            });
+        });
+    };
+
 </script>
+
+<script src="/vendor/jquery/dist/jquery.min.js"></script>
+<script src="/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/vendor/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
+<script src="/vendor/blueimp-file-upload/js/jquery.iframe-transport.js"></script>
+<script src="/vendor/blueimp-file-upload/js/jquery.fileupload.js"></script>
+<script src="/vendor/tinymce/tinymce.min.js"></script>
+
+<script>
+        tinymce.init({
+            selector: '.textarea'
+        });
+</script>
+
 
 
 </body>

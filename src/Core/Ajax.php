@@ -16,4 +16,8 @@ class ajax
 
         echo json_encode($ajaxData);die();
     }
+
+    public function isEmpty(){
+        return empty ($this->data);
+    }
 }

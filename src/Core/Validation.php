@@ -24,10 +24,10 @@ class Validation
         $this->obj = $obj;
         $this->rules = $rules;
 
-        foreach ($rules as $k => $v) {
+       /* foreach ($rules as $k => $v) {
             $this->obj->$k = trim($obj->$k);
             $this->obj->$k = strip_tags($obj->$k);
-        }
+        }*/
     }
 
 

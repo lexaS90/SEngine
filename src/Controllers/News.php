@@ -6,6 +6,7 @@ namespace SEngine\Controllers;
 
 use SEngine\Core\Db;
 use SEngine\Core\Exceptions\MultiException;
+use SEngine\Core\Libs\UploadHandler;
 use SEngine\Core\Ui;
 use SEngine\Core\View;
 use \SEngine\Core\Exceptions\NotFound;
@@ -16,9 +17,7 @@ class News extends Base
     {
         $this->template = 'news.html.twig';
 
-        $news = \SEngine\Models\News::findAll();
-        $this->view->news = $news;
-        
+        $this->view->news = \SEngine\Models\News::findAll();
         
         $this->view->addButton = ['href' => 'http://'.$_SERVER['HTTP_HOST']. '/news/insert', 'text' => 'Добавить'];
         $this->view->controls = array(
@@ -71,7 +70,7 @@ class News extends Base
                 }
             }
             $this->ajaxData->title = 'Добавление новости';
-            $this->ajaxData->body = $form->render();
+            $this->ajaxData->body = $form->render(['imgPath' => 'http://'.$_SERVER['HTTP_HOST'].'/files/']);
         }
         else{
             throw new NotFound;
@@ -113,7 +112,7 @@ class News extends Base
             $form->setData($artical);
 
             $this->ajaxData->title = 'Редактирование новости';
-            $this->ajaxData->body =  $form->render();
+            $this->ajaxData->body =  $form->render(['imgPath' => 'http://'.$_SERVER['HTTP_HOST'].'/files/']);
         }
         else{
             throw new NotFound;
@@ -137,5 +136,33 @@ class News extends Base
         else{
             throw new NotFound;
         }
+    }
+
+    protected function actionLoadImg()
+    {
+        $upload_handler = new UploadHandler(array(
+            'param_name' => 'files'
+        ));
+    }
+
+    public function actionTest()
+    {
+        $this->template = 'insert_news.html.twig';
+
+        $form = new Ui\Form();
+        $form->fields = \SEngine\Models\News::formFields();
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            $artical = new \SEngine\Models\News();
+            $artical->fill($_POST);
+            $artical->save();
+        }
+
+        $artical = \SEngine\Models\News::findById($_GET['id']);
+        $form->setData($artical);
+
+        $this->view->title = 'Редактирование новости';
+        $this->view->form =  $form->render(['imgPath' => 'http://'.$_SERVER['HTTP_HOST'].'/files/']);
     }
 }

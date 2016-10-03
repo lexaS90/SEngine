@@ -1,0 +1,22 @@
+{
+  "name": "sengine.local",
+  "homepage": "https://github.com/lexaS90/SEngine",
+  "authors": [
+    "Alexy Stupakov <workinweb24@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "tinymce": "^4.4.3",
+    "blueimp-file-upload": "^9.12.5",
+    "bootstrap": "^3.3.7"
+  }
+}

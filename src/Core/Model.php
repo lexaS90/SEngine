@@ -159,6 +159,8 @@ abstract class Model
      */
     public function fill($data)
     {
+        $data = $this->beforeFill($data);
+
         foreach ($this as $k => $v){
             /*if ('id' == $k) {
                 continue;
@@ -167,5 +169,26 @@ abstract class Model
             if (key_exists($k,$data))
                 $this->$k = $data[$k];
         }
+
+        $this->afterFill($data);
+    }
+
+    /**
+     * Выполнение перед заполнением данными
+     * @param $data
+     * @return $data
+     */
+    protected function beforeFill($data)
+    {
+        return $data;
+    }
+
+    /**
+     * Выполнение после заполнением данными
+     * @param $data
+     */
+    protected function afterFill($data)
+    {
+
     }
 }

@@ -42,11 +42,12 @@ class Form
         $this->view = new View();
     }
 
-    public function render()
+    public function render($formData = [])
     {
         $this->view->action = $this->action;
         $this->view->method = $this->method;
         $this->view->fields = $this->fields;
+        $this->view->formData = $formData;
 
         return $this->view->renderTwig('ui/form.html.twig');
     }

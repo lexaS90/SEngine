@@ -14,6 +14,7 @@ class News extends Model
 
     public $title;
     public $text;
+    public $files;
     public $author_id;
 
     public static function formFields()
@@ -25,11 +26,26 @@ class News extends Model
         $fields['text'] = array(
             'tag' => 'textarea',  'label' => 'Text'
         );
+
+        $fields['files'] = array(
+            'tag' => 'input',
+            'label' => 'File',
+            'attributes' => [
+                'type' => 'file',
+                'class' => 'fileupload',
+                'data-url' => '/news/loadImg',
+            ],
+        );
+
+        $fields['s'] = array(
+            'tag' => 'input',
+            'attributes' => [
+                'type' => 'submit'
+            ]
+        );
+
         $fields['id'] = array(
             'tag' => 'input',  'attributes' => ['type' => 'hidden']
-        );
-        $fields['form_submit'] = array(
-            'tag' => 'input', 'attributes' => ['type' => 'submit', 'value' => 'Отправить']
         );
 
         return $fields;
@@ -40,10 +56,20 @@ class News extends Model
         $rule = array(
             'title' => ['required' => true],
             'text' => ['required' => true],
+            'files' => ['required' => true],
         );
 
         $validation = new Validation($this, $rule);
         return $validation->run();
+    }
+
+    protected function beforeFill($data)
+    {
+
+        if (!file_exists($_SERVER['DOCUMENT_ROOT'].'/files/'.$data['files']))
+           $data['files'] = '';
+
+        return $data;
     }
 
 }
