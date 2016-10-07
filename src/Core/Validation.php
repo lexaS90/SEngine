@@ -12,6 +12,8 @@ class Validation
 {
     private $obj;
     private $rules;
+    public $errors = array();
+    public $isValid = false;
 
 
     /**
@@ -23,40 +25,36 @@ class Validation
     {
         $this->obj = $obj;
         $this->rules = $rules;
-
-       /* foreach ($rules as $k => $v) {
-            $this->obj->$k = trim($obj->$k);
-            $this->obj->$k = strip_tags($obj->$k);
-        }*/
     }
 
 
     /**
      * Запуск валидации
-     * @return bool
-     * @throws MultiException
-     * @throws array
+     * @return $this
      */
     public function run()
     {
-        $e = new MultiException();
+        $errors = array();
 
         foreach($this->rules as $k => $v) {
             foreach ($v as $ruleKey => $ruleValue) {
                 if (method_exists($this, $ruleKey)) {
                     $result = $this->$ruleKey($this->obj->$k, $ruleValue, $k);
                     if (true !== $result) {
-                        $e[] = array('field' => $k, 'errorText' => $result);
-
+                        $errors[] = array('field' => $k, 'errorText' => $result);
                     }
                 }
             }
         }
-        if (count($e) > 0) {
-            throw $e;
+        if (count($errors) > 0) {
+            $this->errors = $errors;
+            $this->isValid = false;
+        }
+        else{
+            $this->isValid = true;
         }
 
-        return true;
+        return $this;
     }
 
     /**
@@ -131,5 +129,22 @@ class Validation
 
             return $error;
         }
+    }
+
+    /**
+     * Фильтр данных
+     * @param $prop
+     * @param $value
+     * @param string $propName
+     * @return bool
+     */
+    public function mainFilter($prop, $value, $propName = '')
+    {
+        if (true === $value) {
+            $this->obj->$propName = trim($this->obj->$propName);
+            $this->obj->$propName = strip_tags($this->obj->$propName);
+        }
+
+        return true;
     }
 }

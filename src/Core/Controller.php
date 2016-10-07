@@ -51,9 +51,6 @@ class Controller
      */
     public function __destruct()
     {
-        //var_dump($this->ajaxData->isEmpty());die;
-
-
         if ($this->isAjax){
             if (!$this->ajaxData->isEmpty())
                 $this->ajaxData->display();

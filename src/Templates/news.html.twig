@@ -8,14 +8,15 @@
 
 {% block content %}
 
+    {% if addButton is not empty %}
+        <a href="{{ addButton.href }}" data-remote="false" data-toggle="modal" data-target="#myModal" class="btn btn-default">{{ addButton.text }}</a>
+    {% endif %}
 
-
-    <a href="{{ addButton.href }}" data-remote="false" data-toggle="modal" data-target="#myModal" class="btn btn-default">{{ addButton.text }}</a>
     {% for artical in news %}
 
     <h2><a href="/news/artical?id={{ artical.id }}">{{ artical.title }}</a></h2>
     {% if artical.files is not empty %}
-        <img src="{{ base }}/files/{{ artical.files }}" alt="{{ artical.title }}" width="20%">
+        <img src="{{ base }}/files/100_100/{{ artical.files }}" alt="{{ artical.title }}">
     {% endif %}
         <div class="articles">
         {{ artical.text|raw }}

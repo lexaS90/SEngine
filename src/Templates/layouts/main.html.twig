@@ -22,6 +22,11 @@
     <div id="header">
         <h1><a href="#">Website Title</a></h1>
         <h2>Subheader, website description H2</h2>
+        {% if isAuth %}
+            <a href="{{ base }}/user/logout">Выйти</a>
+        {% else %}
+            <a href="{{ base }}/user/login">Войти</a>
+        {% endif %}
     </div>
 
     <div id="menu">
@@ -150,15 +155,12 @@
                     $('.alert').show();
 
                     $('.alert').html('');
-                    $form.find("[name]").css('border', '');
+                    $form.find("[name]").css('border', '');console.log(html.errors);
 
-                    $.each(html.error, function (field, error) {
-                        $('<p/>').text(error).appendTo('.alert');
-                        $form.find("[name='" + field + "']").css('border', '1px solid red');
+                    $.each(html.errors, function (field, error) {
+                        $('<p/>').text(error.errorText).appendTo('.alert');
+                        $form.find("[name='" + error.field + "']").css('border', '1px solid red');
                     });
-
-
-
                 }
                 else{
                     $("#myModal").modal('hide');
@@ -175,14 +177,14 @@
         'use strict';
 
         var fileupload = $('.fileupload');
-        var url = fileupload.attr('data-url');console.log(fileupload);
+        var url = fileupload.attr('data-url');
         var uploadData = fileupload.siblings('input');
 
         fileupload.fileupload({
             replaceFileInput: false,
             dataType: 'json',
-            done: function (e, data) {console.log('ok');
-                $.each(data.result.files, function (index, file) {console.log(file);
+            done: function (e, data) {
+                $.each(data.result.files, function (index, file) {
                     uploadData.val(file.name);
                     var deleteBtn = "<button data-url='"+file.name+"' data-type='DELETE' class='btn btn-danger delete'>X</button>";
                     $('#files').html('<img width="10%" src=' + file.url +'>'+deleteBtn);
@@ -206,7 +208,6 @@
                 success: function(html){
                     uploadData.val('');
                     $('#files').html('');
-                    console.log(html);
                 },
             });
         });

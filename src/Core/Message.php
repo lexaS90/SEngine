@@ -18,7 +18,7 @@ class Message implements \ArrayAccess
 
     public function __construct($data, $lang = null)
     {
-        $langDefault = $lang ?? Config::instance()->site->lang_default;
+        $langDefault = (null !== $lang) ? $lang : Config::instance()->site->lang_default;
         $this->data = require (__DIR__ .'/../message/'.$langDefault.'/'.$data.'.php');
     }
 }

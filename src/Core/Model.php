@@ -113,7 +113,16 @@ abstract class Model
      */
     public function save()
     {
+        $this->beforeSave();
         return ($this->isNew()) ? $this->insert() : $this->update();
+    }
+
+    /**
+     *  Выхов перед сохранением
+     */
+    protected function beforeSave()
+    {
+
     }
 
     /**

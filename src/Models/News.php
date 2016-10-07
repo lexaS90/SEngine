@@ -4,6 +4,7 @@
 namespace SEngine\Models;
 
 
+use SEngine\Core\imgTools;
 use SEngine\Core\Model;
 use SEngine\Core\Validation;
 
@@ -54,7 +55,7 @@ class News extends Model
     public function validation()
     {
         $rule = array(
-            'title' => ['required' => true],
+            'title' => ['required' => true, 'mainFilter' => true],
             'text' => ['required' => true],
             'files' => ['required' => true],
         );
@@ -70,6 +71,17 @@ class News extends Model
            $data['files'] = '';
 
         return $data;
+    }
+
+    protected function beforeSave()
+    {
+        $imgTools = imgTools::instance();
+
+        $imgPath = $_SERVER['DOCUMENT_ROOT'].'/files/'.$this->files;
+        $sDir = $_SERVER['DOCUMENT_ROOT'].'/files/100_100/'.$this->files;
+
+        $imgTools->fit($imgPath,$sDir,100,100);
+
     }
 
 }

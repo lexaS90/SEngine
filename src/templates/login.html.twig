@@ -1,0 +1,15 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+    <title>Вход</title>
+{% endblock %}
+
+
+{% block content %}
+
+    <h1>{{ title }}</h1>
+    {{ form|raw }}
+
+{% endblock %}
+
