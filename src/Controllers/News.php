@@ -10,24 +10,25 @@ use SEngine\Core\Libs\UploadHandler;
 use SEngine\Core\Ui;
 use SEngine\Core\View;
 use \SEngine\Core\Exceptions\NotFound;
+use SEngine\Models\Slider;
 use SEngine\Models\User;
 
 class News extends Base
 {
     protected function actionIndex()
     {
-        $this->template = 'news.html.twig';
-
+        $this->template = 'news.html.twig';        
         $this->view->news = \SEngine\Models\News::findAll();
+        $this->view->sliders = Slider::findAll();
 
         if (User::isAuth()) {
-            $this->view->addButton = ['href' => 'http://' . $_SERVER['HTTP_HOST'] . '/news/insert', 'text' => 'Добавить'];
+
             $this->view->controls = array(
+                'add' => ['href' =>'http://' . $_SERVER['HTTP_HOST'] . '/news/insert', 'text' => 'Добавить'],
                 'edit' => ['href' => 'http://' . $_SERVER['HTTP_HOST'] . '/news/update?id=', 'text' => 'edit'],
                 'remove' => ['href' => 'http://' . $_SERVER['HTTP_HOST'] . '/news/remove?id=', 'text' => 'remove'],
             );
         }
-        
         
     }
 
@@ -43,7 +44,7 @@ class News extends Base
     
     protected function actionInsert()
     {
-        if (User::isAuth()) {
+       if (User::isAuth()) {
             if ($this->isAjax) {
                 $form = new Ui\Form();
                 $form->fields = \SEngine\Models\News::formFields();
@@ -56,7 +57,7 @@ class News extends Base
 
                     if ($valid->isValid) {
                         $artical->save();
-                        (new Ui\StatusMessage())->set('Новость сохранена');
+                        $this->msg->setSessionMsg('Новость сохранена');
                         $this->ajaxData->status = 1;
                         $this->ajaxData->redirect = '/news';
                     } else {
@@ -78,35 +79,38 @@ class News extends Base
 
     protected function actionUpdate()
     {
-        if ($this->isAjax){
-            $form = new Ui\Form();
-            $form->fields = \SEngine\Models\News::formFields();
+        if (User::isAuth()) {
+            if ($this->isAjax) {
+                $form = new Ui\Form();
+                $form->fields = \SEngine\Models\News::formFields();
 
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-                $artical = new \SEngine\Models\News();
-                $artical->fill($_POST);
+                    $artical = new \SEngine\Models\News();
+                    $artical->fill($_POST);
 
 
-                $valid = $artical->validation();
+                    $valid = $artical->validation();
 
-                if ($valid->isValid){
-                    $artical->save();
-                    (new Ui\StatusMessage())->set('Новость обновлена');
-                    $this->ajaxData->status = 1;
-                    $this->ajaxData->redirect = '/news';
+                    if ($valid->isValid) {
+                        $artical->save();
+                        $this->msg->setSessionMsg('Новость обновлена');
+                        $this->ajaxData->status = 1;
+                        $this->ajaxData->redirect = '/news';
+                    } else {
+                        $this->ajaxData->errors = $valid->errors;
+                        $this->ajaxData->status = 0;
+                    }
                 }
-                else{
-                    $this->ajaxData->errors = $valid->errors;
-                    $this->ajaxData->status = 0;
-                }
+
+                $artical = \SEngine\Models\News::findById($_GET['id']);
+                $form->setData($artical);
+
+                $this->ajaxData->title = 'Редактирование новости';
+                $this->ajaxData->body = $form->render(['imgPath' => 'http://' . $_SERVER['HTTP_HOST'] . '/files/']);
+            } else {
+                throw new NotFound;
             }
-
-            $artical = \SEngine\Models\News::findById($_GET['id']);
-            $form->setData($artical);
-
-            $this->ajaxData->title = 'Редактирование новости';
-            $this->ajaxData->body =  $form->render(['imgPath' => 'http://'.$_SERVER['HTTP_HOST'].'/files/']);
         }
         else{
             throw new NotFound;
@@ -115,19 +119,25 @@ class News extends Base
 
     protected function actionRemove()
     {
-        if ($this->isAjax){
-            $this->ajaxData->title = 'Удаление новости';
-            $this->ajaxData->body =  '<p>Вы действительно хотите удалить новость?</p>';
+        if (User::isAuth()) {
+            if ($this->isAjax){
+                $this->ajaxData->title = 'Удаление новости';
+                $this->ajaxData->body =  '<p>Вы действительно хотите удалить новость?</p>';
 
-            if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-                $artical = \SEngine\Models\News::findById($_GET['id']);
-                $artical->delete();
-                (new Ui\StatusMessage())->set('Новость удалена');
-                $this->ajaxData->status = 1;
-                $this->ajaxData->redirect = '/news';
+                if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+                    $artical = \SEngine\Models\News::findById($_GET['id']);
+                    $artical->delete();
+                    $this->msg->setSessionMsg('Новость удалена');
+                    $this->ajaxData->status = 1;
+                    $this->ajaxData->redirect = '/news';
+                }
+            }
+            else{
+                throw new NotFound;
             }
         }
-        else{
+        else
+        {
             throw new NotFound;
         }
     }

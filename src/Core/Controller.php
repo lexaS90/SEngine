@@ -5,12 +5,14 @@ namespace SEngine\Core;
 
 
 use SEngine\Core\Ui\StatusMessage;
+use SEngine\Models\User;
 
 class Controller
 {
     protected $view;
     protected $ajaxData;
     protected $template = '';
+    protected $msg;
     public $isAjax = false;
 
     /**
@@ -20,10 +22,15 @@ class Controller
     {
         $this->view = new View();
         $this->ajaxData = new Ajax();
-        
-        $this->view->msg = (new StatusMessage())->get();
+        $this->msg = new StatusMessage();
+        $this->view->isAuth = User::isAuth();
+
+        $this->view->base = "http://".$_SERVER['HTTP_HOST'];
+        $this->view->baseDir = $_SERVER['DOCUMENT_ROOT'];
 
         $this->isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
+
+        $this->view->msg = $this->msg->getSessionMsg();
     }
 
     /**
@@ -56,8 +63,10 @@ class Controller
                 $this->ajaxData->display();
         }
         else{
-            if ('' !== $this->template)
+            if ('' !== $this->template) {
+                $this->view->msg .= $this->msg->getMsg();
                 $this->view->displayTwig($this->template);
+            }
         }
     }
 }

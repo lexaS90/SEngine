@@ -183,6 +183,20 @@ abstract class Model
     }
 
     /**
+     * Очистка данных
+     */
+    public function clear()
+    {
+        foreach ($this as $k => $v){
+            if ('id' == $k) {
+                continue;
+            }
+
+            $this->$k = '';
+        }
+    }
+
+    /**
      * Выполнение перед заполнением данными
      * @param $data
      * @return $data

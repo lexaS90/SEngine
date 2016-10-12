@@ -14,26 +14,47 @@ use SEngine\Core\View;
 class StatusMessage
 {
     private $view;
+    private $msg = array();
 
     public function __construct()
     {
         $this->view = new View();
+        session_start();
     }
 
-    public function set($text, $status = 'success')
+    public function setSessionMsg($text, $status = 'success')
     {
-        session_start();
-        $_SESSION['session_messages'][] = array('text' =>  $text, 'status' => $status);
+        $_SESSION['session_messages'][$status][] = $text;
     }
 
-    public function get()
+    public function getSessionMsg()
     {
-        session_start();
-        $msgArray = $_SESSION['session_messages'];
+        $this->view->msg = $_SESSION['session_messages'];
         unset($_SESSION['session_messages']);
-
-        $this->view->msg = $msgArray;
-
         return $this->view->renderTwig('ui/msg.html.twig');
     }
+
+    public function setMsg($text, $status = 'success')
+    {
+        $this->msg[$status][] = $text;
+    }
+
+    public function getMsg()
+    {
+        $this->view->msg = $this->msg;
+        return $this->view->renderTwig('ui/msg.html.twig');
+    }
+
+   /* public function add($text, $status = 'success')
+    {
+        $this->msg[] = array('text' =>  $text, 'status' => $status);
+    }
+
+    public function setArray($errors, $status = 'success')
+    {
+        foreach ($errors as $error)
+            $this->set($error, $status);
+    }*/
+
+
 }

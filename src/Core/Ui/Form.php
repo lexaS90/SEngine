@@ -63,4 +63,11 @@ class Form
             }
         }
     }
+
+    public function setErrors($errors)
+    {
+        foreach ($errors as $k => $error) {
+            $this->fields[$error]['error'] = true;
+        }
+    }
 }

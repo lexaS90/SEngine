@@ -13,6 +13,8 @@ class Validation
     private $obj;
     private $rules;
     public $errors = array();
+    public $errorText = array();
+    public $errorField = array();
     public $isValid = false;
 
 
@@ -42,6 +44,8 @@ class Validation
                     $result = $this->$ruleKey($this->obj->$k, $ruleValue, $k);
                     if (true !== $result) {
                         $errors[] = array('field' => $k, 'errorText' => $result);
+                        $this->errorText[] = $result;
+                        $this->errorField[] = $k;
                     }
                 }
             }

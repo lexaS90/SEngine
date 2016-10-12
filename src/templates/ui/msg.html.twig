@@ -1,6 +1,8 @@
-{%for item in msg %}
-<div class="alert alert-dismissible alert-{{ item.status }}">
+{%for status,message in msg %}
+<div class="alert alert-dismissible alert-{{ status }}">
     <button type="button" class="close" data-dismiss="alert">×</button>
-    <div>{{ item.text }}</div>
+    {% for message in message %}
+        <div>{{ message }}</div>
+    {% endfor %}
 </div>
 {% endfor %}

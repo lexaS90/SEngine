@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: root
- * Date: 05.10.2016
- * Time: 13:30
- */
 
 namespace SEngine\Core;
 
@@ -12,7 +6,7 @@ use Intervention\Image\ImageManager;
 use SEngine\Core\Libs\Singleton;
 
 
-class imgTools
+class ImgTools
 {
     use Singleton;
 

@@ -4,7 +4,7 @@
 namespace SEngine\Models;
 
 
-use SEngine\Core\imgTools;
+use SEngine\Core\ImgTools;
 use SEngine\Core\Model;
 use SEngine\Core\Validation;
 
@@ -22,15 +22,20 @@ class News extends Model
     {
         $fields = [];
         $fields['title'] = array(
-            'tag' => 'input', 'label' => 'Title', 'attributes' => ['type' => 'text']
+            'tag' => 'input',
+            'label' => 'Title',
+            'attributes' => [
+                'type' => 'text',
+                'class' => 'form-control',
+            ]
         );
         $fields['text'] = array(
-            'tag' => 'textarea',  'label' => 'Text'
+            'tag' => 'textarea',
+            'label' => 'Text'
         );
 
         $fields['files'] = array(
             'tag' => 'input',
-            'label' => 'File',
             'attributes' => [
                 'type' => 'file',
                 'class' => 'fileupload',
@@ -38,15 +43,18 @@ class News extends Model
             ],
         );
 
-        $fields['s'] = array(
+/*        $fields['s'] = array(
             'tag' => 'input',
             'attributes' => [
                 'type' => 'submit'
             ]
-        );
+        );*/
 
         $fields['id'] = array(
-            'tag' => 'input',  'attributes' => ['type' => 'hidden']
+            'tag' => 'input',
+            'attributes' => [
+                'type' => 'hidden'
+            ]
         );
 
         return $fields;
@@ -57,7 +65,6 @@ class News extends Model
         $rule = array(
             'title' => ['required' => true, 'mainFilter' => true],
             'text' => ['required' => true],
-            'files' => ['required' => true],
         );
 
         $validation = new Validation($this, $rule);
@@ -75,12 +82,14 @@ class News extends Model
 
     protected function beforeSave()
     {
-        $imgTools = imgTools::instance();
+        if (!empty($this->files)) {
+            $imgTools = ImgTools::instance();
 
-        $imgPath = $_SERVER['DOCUMENT_ROOT'].'/files/'.$this->files;
-        $sDir = $_SERVER['DOCUMENT_ROOT'].'/files/100_100/'.$this->files;
+            $imgPath = $_SERVER['DOCUMENT_ROOT'] . '/files/' . $this->files;
+            $sDir = $_SERVER['DOCUMENT_ROOT'] . '/files/100_100/' . $this->files;
 
-        $imgTools->fit($imgPath,$sDir,100,100);
+            $imgTools->fit($imgPath, $sDir, 100, 100);
+        }
 
     }
 

@@ -5,6 +5,8 @@ namespace SEngine\Models;
 
 use SEngine\Core\Db;
 use SEngine\Core\Model;
+use SEngine\Core\Validation;
+use SEngine\Core\ImgTools;
 
 class User extends Model
 {
@@ -13,6 +15,7 @@ class User extends Model
     public $login;
     public $password;
     public $email;
+    public $img;
     public $hash;
 
     /**
@@ -61,6 +64,8 @@ class User extends Model
 
     public static function logOut()
     {
+        session_start();
+
         if (self::isAuth()){
             unset($_SESSION['sId']);
         }
@@ -68,6 +73,8 @@ class User extends Model
 
     public static function isAuth()
     {
+        session_start();
+
         if (!isset($_SESSION['sId']))
             return false;
 
@@ -87,17 +94,26 @@ class User extends Model
         $fields['login'] = array(
             'tag' => 'input',
             'label' => 'Login',
-            'attributes' => ['type' => 'text']
+            'attributes' => [
+                'type' => 'text',
+                'class' => 'form-control',
+            ]
         );
 
         $fields['password'] = array(
-            'tag' => 'input', 'label' => 'Password', 'attributes' => ['type' => 'password']
+            'tag' => 'input',
+            'label' => 'Password',
+            'attributes' => [
+                'type' => 'password',
+                'class' => 'form-control',
+            ]
         );
 
         $fields['submit'] = array(
             'tag' => 'input',
             'attributes' => [
-                'type' => 'submit'
+                'type' => 'submit',
+                'class' => 'btn btn-primary',
             ]
         );
 
@@ -109,6 +125,85 @@ class User extends Model
         $rule = array(
             'login' => ['required' => true, 'mainFilter' => true],
             'password' => ['required' => true, 'mainFilter' => true],
+        );
+
+        $validation = new Validation($this, $rule);
+        return $validation->run();
+    }
+
+    public static function formFieldsProfile()
+    {
+        $fields = [];
+
+        $fields['login'] = array(
+            'tag' => 'input',
+            'label' => 'Login',
+            'attributes' => [
+                'type' => 'text',
+                'class' => 'form-control',
+            ]
+        );
+
+        $fields['email'] = array(
+            'tag' => 'input',
+            'label' => 'Email',
+            'attributes' => [
+                'type' => 'text',
+                'class' => 'form-control',
+            ]
+        );
+
+/*        $fields['oldPass'] = array(
+            'tag' => 'input',
+            'label' => 'oldPassword',
+            'attributes' => [
+                'type' => 'password',
+                'class' => 'form-control',
+            ]
+        );*/
+
+        $fields['password'] = array(
+            'tag' => 'input',
+            'label' => 'Password',
+            'attributes' => [
+                'type' => 'password',
+                'class' => 'form-control',
+            ]
+        );
+
+        $fields['img'] = array(
+            'tag' => 'input',
+            'attributes' => [
+                'type' => 'file',
+                'class' => 'fileupload',
+                'data-url' => '/user/loadImg',
+            ],
+        );
+
+        $fields['id'] = array(
+            'tag' => 'input',
+            'attributes' => [
+                'type' => 'hidden'
+            ]
+        );
+
+        $fields['submit'] = array(
+            'tag' => 'input',
+            'attributes' => [
+                'type' => 'submit',
+                'class' => 'btn btn-primary',
+            ]
+        );
+
+        return $fields;
+    }
+
+    public function validationProfile()
+    {
+        $rule = array(
+            'login' => ['required' => true, 'mainFilter' => true],
+            'password' => ['required' => true, 'mainFilter' => true],
+            'email' => ['required' => true, 'mainFilter' => true, 'email' => true],
         );
 
         $validation = new Validation($this, $rule);
@@ -129,5 +224,18 @@ class User extends Model
 
         return $code;
 
+    }
+
+    protected function beforeSave()
+    {
+
+        if (!empty($this->img)) {
+            $imgTools = ImgTools::instance();
+
+            $imgPath = $_SERVER['DOCUMENT_ROOT'] . '/files/user/' . $this->img;
+            $sDir = $_SERVER['DOCUMENT_ROOT'] . '/files/user/' . $this->img;
+
+            $imgTools->fit($imgPath, $sDir, 50, 50);
+        }
     }
 }

@@ -5,7 +5,8 @@ namespace SEngine\Controllers;
 
 
 use SEngine\Core\Controller;
-use SEngine\Models\User;
+use SEngine\Models\Settings;
+
 
 class Base extends Controller
 {
@@ -15,10 +16,11 @@ class Base extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->view->base = "http://".$_SERVER['HTTP_HOST'];
-        $this->view->baseDir = $_SERVER['DOCUMENT_ROOT'];
+        $settings = Settings::findById(1);
+
+
         $this->view->menu = array('Home', 'About', 'Photo');
-        $this->view->isAuth = User::isAuth();
+        $this->view->settings = $settings;
 
     }
 }

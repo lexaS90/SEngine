@@ -1,43 +1,44 @@
 <form action="{{ action }}" method="{{ method }}">
     {% for key, field in fields %}
+    <div class="form-group {% if  field.error == true %}has-error{% endif %}">
 
         {% if field.tag == 'input' %}
-            <div class="form-item">
-                <label>{{ field.label }}
-                    {% if field.attributes.class == 'fileupload' %}
-                        <span class="btn btn-success fileinput-button">
-                            <i class="glyphicon glyphicon-plus"></i>
-                            <span>Select files...</span>
-                            <input {% for key, item in field.attributes %} {{ key }}="{{ item }}" {% endfor %}>
-                            <input type="hidden" name="{{ key }}" value="{{ field.attributes.value }}">
-                        </span>
-                        <br>
-                        <br>
-                        <div id="progress" class="progress">
-                            <div class="progress-bar progress-bar-success"></div>
-                        </div>
-                        <div id="files" class="files">
-                            {% if field.attributes.value is not empty %}
-                                <img src="{{ formData.imgPath }}{{ field.attributes.value }}" width="10%">
-                                <button type="button" data-url='{{ field.attributes.value }}' data-type='DELETE' class='btn btn-danger delete'>X</button>
-                            {% endif %}
-                        </div>
 
-                    {% else %}
-                        <input name="{{ key }}" {% for key, item in field.attributes %} {{ key }}="{{ item }}" {% endfor %}>
+            <label>{{ field.label }}</label>
+            {% if field.attributes.class == 'fileupload' %}
+                <span class="btn btn-success fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>Select files...</span>
+                    <input name="{{ key }}" {% for key, item in field.attributes %} {{ key }}="{{ item }}" {% endfor %}>
+                    <input type="hidden" name="{{ key }}" value="{{ field.attributes.value }}">
+                </span>
+                <br>
+                <br>
+                <div id="progress" class="progress">
+                    <div class="progress-bar progress-bar-success"></div>
+                </div>
+                <div id="files" class="files">
+                    {% if field.attributes.value is not empty %}
+                        <img src="{{ formData.imgPath }}{{ field.attributes.value }}" width="30%">
+                        <button type="button" data-url='{{ field.attributes.value }}' data-type='DELETE' class='delete'><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
                     {% endif %}
-                </label>
-            </div>
+                </div>
+
+            {% else %}
+                <input name="{{ key }}" {% for key, item in field.attributes %} {{ key }}="{{ item }}" {% endfor %}>
+            {% endif %}
+
+
         {% endif %}
 
         {% if field.tag == 'textarea' %}
             <div class="form-item">
-                <label>{{ field.label }}
+                <label>{{ field.label }}</label>
                     <textarea name="{{ key }}" class="textarea"
-                    {% for key, item in field.attributes %} {{ key }}="{{ item }}"
+                    {% for key, item in field.attributes %}{{ key }}="{{ item }}"
 
                         {% endfor %}>{{ field.value }}</textarea>
-                </label>
+
             </div>
         {% endif %}
 
@@ -55,5 +56,6 @@
             </div>
         {% endif %}
 
-    {% endfor %}
+    </div>
+        {% endfor %}
 </form>
