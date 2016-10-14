@@ -7,7 +7,7 @@ namespace SEngine\Core;
 use SEngine\Core\Ui\StatusMessage;
 use SEngine\Models\User;
 
-class Controller
+abstract class Controller
 {
     protected $view;
     protected $ajaxData;
@@ -25,12 +25,14 @@ class Controller
         $this->msg = new StatusMessage();
         $this->view->isAuth = User::isAuth();
 
-        $this->view->base = "http://".$_SERVER['HTTP_HOST'];
-        $this->view->baseDir = $_SERVER['DOCUMENT_ROOT'];
+        $this->view->base = $this->base();
+        $this->view->baseDir = $this->baseDir();
 
         $this->isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
 
         $this->view->msg = $this->msg->getSessionMsg();
+
+
     }
 
     /**
@@ -51,6 +53,44 @@ class Controller
 
         $methodName = 'action' . $action;
         return $this->$methodName();
+    }
+
+
+    /**
+     * Базовая директория по HTTP
+     * @return string
+     */
+    public function base()
+    {
+        return "http://".$_SERVER['HTTP_HOST'];
+    }
+
+    /**
+     * Базовая директория файловой системы
+     * @return string
+     */
+    public function baseDir()
+    {
+        return  $_SERVER['DOCUMENT_ROOT'];
+    }
+
+
+    /**
+     * Запрос произведен методом GET?
+     * @return bool
+     */
+    protected function IsGet()
+    {
+        return $_SERVER['REQUEST_METHOD'] == 'GET';
+    }
+
+    /**
+     * Запрос произведен методом POST?
+     * @return bool
+     */
+    protected function IsPost()
+    {
+        return $_SERVER['REQUEST_METHOD'] == 'POST';
     }
 
     /**

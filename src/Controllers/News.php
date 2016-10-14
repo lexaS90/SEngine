@@ -7,6 +7,7 @@ namespace SEngine\Controllers;
 
 use SEngine\Core\Exceptions\MultiException;
 use SEngine\Core\Libs\UploadHandler;
+use SEngine\Core\Message;
 use SEngine\Core\Ui;
 use SEngine\Core\View;
 use \SEngine\Core\Exceptions\NotFound;
@@ -57,7 +58,7 @@ class News extends Base
 
                     if ($valid->isValid) {
                         $artical->save();
-                        $this->msg->setSessionMsg('Новость сохранена');
+                        $this->msg->setSessionMsg((new Message('news'))->status->save);
                         $this->ajaxData->status = 1;
                         $this->ajaxData->redirect = '/news';
                     } else {
@@ -94,7 +95,7 @@ class News extends Base
 
                     if ($valid->isValid) {
                         $artical->save();
-                        $this->msg->setSessionMsg('Новость обновлена');
+                        $this->msg->setSessionMsg((new Message('news'))->status->edit);
                         $this->ajaxData->status = 1;
                         $this->ajaxData->redirect = '/news';
                     } else {
@@ -127,7 +128,7 @@ class News extends Base
                 if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                     $artical = \SEngine\Models\News::findById($_GET['id']);
                     $artical->delete();
-                    $this->msg->setSessionMsg('Новость удалена');
+                    $this->msg->setSessionMsg((new Message('news'))->status->remove);
                     $this->ajaxData->status = 1;
                     $this->ajaxData->redirect = '/news';
                 }
@@ -151,11 +152,7 @@ class News extends Base
 
     public function actionTest()
     {
-        $this->template = 'insert_news.html.twig';
-
-        $form = new Ui\Form();
-        $form->fields = \SEngine\Models\News::formFields();
-
-        $this->view->form = $form->render(['imgPath' => 'http://' . $_SERVER['HTTP_HOST'] . '/files/']);
+        echo (new Message('error'))->site->error_404;
+        echo (new Message('error',en))->site->error_404;
     }
 }

@@ -71,9 +71,6 @@ function up() {
     var uploadData = fileupload.siblings('input');
     var urlParam = uploadData.attr('name');
 
-    console.log(urlParam);
-    console.log('ok');
-
     fileupload.fileupload({
         replaceFileInput: false,
         dataType: 'json',
